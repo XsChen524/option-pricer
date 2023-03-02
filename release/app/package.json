@@ -1,7 +1,9 @@
 {
   "name": "option-pricer",
   "license": "MIT",
-  "author": "Chen Xingsheng 3035535547",
+  "version": "0.1.0",
+  "description": "Option Pricer",
+  "author": "Chen Xingsheng",
   "main": "./dist/main/main.js",
   "scripts": {
     "rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",

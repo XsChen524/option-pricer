@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+	"allowJs": true,
+	"allowSyntheticDefaultImports": true,
+	"baseUrl": "./src",
+	"declaration": true,
+	"declarationDir": "./typings",
+	"esModuleInterop": true,
+	"forceConsistentCasingInFileNames": true,
+    "incremental": true,
+	"jsx": "react-jsx",
+	"lib": ["dom", "es2021"],
+	"module": "commonjs",
+	"moduleResolution": "node",
+	"outDir": ".erb/dll",
+	"resolveJsonModule": true,
+	"sourceMap": true,
+	"strict": true,
+    "target": "es2021"
+  },
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
+}

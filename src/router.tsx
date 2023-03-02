@@ -1,7 +1,8 @@
+import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Home from "./views/HomeView";
 
-const MainRouter = () => {
+const MainRouter: React.FunctionComponent<{}> = () => {
 	return (
 		<Routes>
 			<Route path="/" element={<Home />} />
@@ -9,7 +10,7 @@ const MainRouter = () => {
 	);
 };
 
-const AppRouter = () => {
+const AppRouter: React.FunctionComponent<{}> = () => {
 	return (
 		<HashRouter>
 			<MainRouter />

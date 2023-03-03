@@ -7,6 +7,7 @@ module.exports = {
 		"import/extensions": "off",
 		"import/no-unresolved": "off",
 		"import/no-import-module-exports": "off",
+		"react/destructuring-assignment": "off",
 		"react/function-component-definition": "off",
 		"react/react-in-jsx-scope": "off",
 		"react/jsx-filename-extension": "off",

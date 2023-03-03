@@ -18,10 +18,12 @@
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts"
   },
   "dependencies": {
+    "@stdlib/stats-base-dists-normal-cdf": "^0.0.7",
     "antd": "^5.2.3",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^5.3.0",
+    "mathjs": "^11.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1"

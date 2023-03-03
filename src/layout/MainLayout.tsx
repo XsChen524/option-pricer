@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FunctionOutlined } from "@ant-design/icons";
+import { HomeOutlined, FunctionOutlined } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import type { MenuProps } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,15 @@ const MainLayout: React.FC<{}> = () => {
 	const items: MenuProps["items"] = [
 		{
 			key: "1",
+			icon: React.createElement(HomeOutlined),
+			label: "Home",
+			onClick: () => {
+				setTitle("Option Pricer");
+				navigate("/");
+			},
+		},
+		{
+			key: "2",
 			icon: React.createElement(FunctionOutlined),
 			label: "Extended BS",
 			onClick: () => {
@@ -23,7 +32,7 @@ const MainLayout: React.FC<{}> = () => {
 			},
 		},
 		{
-			key: "2",
+			key: "3",
 			icon: React.createElement(FunctionOutlined),
 			label: "Implied Volatility",
 			onClick: () => {
@@ -42,7 +51,7 @@ const MainLayout: React.FC<{}> = () => {
 				<Header id="main-layout-header">
 					<h3>{title}</h3>
 				</Header>
-				<Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
+				<Content style={{ margin: "24px 24px 0", overflow: "initial" }}>
 					<div id="main-layout-content-container">
 						<AppRouter />
 					</div>

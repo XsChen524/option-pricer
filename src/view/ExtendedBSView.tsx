@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Row, Select, Table } from "antd";
+import { ColumnsType } from "antd/es/table";
 import { ExtendedBSParams, ExtendedBSRawParams } from "service/input";
 import ExtendedBS from "service/extendedBs";
 import "../style/view/extendedBs.css";
-import { ColumnsType } from "antd/es/table";
 
 const layout = {
 	labelCol: { span: 8 },

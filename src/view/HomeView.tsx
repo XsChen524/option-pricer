@@ -1,8 +1,9 @@
 import React from "react";
+import "../style/view/home.css";
 
 const Home: React.FunctionComponent<{}> = () => {
 	return (
-		<div>
+		<div id="home-view-container">
 			<p>Hello</p>
 		</div>
 	);

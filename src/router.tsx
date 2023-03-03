@@ -1,20 +1,16 @@
 import React from "react";
-import { HashRouter, Route, Routes } from "react-router-dom";
-import Home from "./views/HomeView";
-
-const MainRouter: React.FunctionComponent<{}> = () => {
-	return (
-		<Routes>
-			<Route path="/" element={<Home />} />
-		</Routes>
-	);
-};
+import { Route, Routes } from "react-router-dom";
+import ExtendedBSView from "view/ExtendedBS";
+import IvView from "./view/IvView";
+import Home from "./view/HomeView";
 
 const AppRouter: React.FunctionComponent<{}> = () => {
 	return (
-		<HashRouter>
-			<MainRouter />
-		</HashRouter>
+		<Routes>
+			<Route index path="/" element={<Home />} />
+			<Route path="ebs" element={<ExtendedBSView />} />
+			<Route path="iv" element={<IvView />} />
+		</Routes>
 	);
 };
 

@@ -1,9 +1,15 @@
 import { createRoot } from "react-dom/client";
-import AppRouter from "router";
+import { HashRouter } from "react-router-dom";
+import MainLayout from "layout/MainLayout";
+import "../style/default.css";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
-root.render(<AppRouter />);
+root.render(
+	<HashRouter>
+		<MainLayout />
+	</HashRouter>
+);
 
 // calling IPC exposed from preload script
 window.electron.ipcRenderer.once("ipc-example", (arg) => {

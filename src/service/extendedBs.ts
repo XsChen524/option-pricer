@@ -25,7 +25,7 @@ export default class ExtendedBS implements ExtendedBSParams {
 
 	strike: number;
 
-	timeToMaturity: number;
+	termToMaturity: number;
 
 	riskFreeRate: number;
 
@@ -41,7 +41,7 @@ export default class ExtendedBS implements ExtendedBSParams {
 		this.riskFreeRate = props.riskFreeRate;
 		this.repoRate = props.repoRate;
 		this.optionType = props.optionType;
-		this.timeToMaturity = props.timeToMaturity;
+		this.termToMaturity = props.termToMaturity;
 		this.volatility = props.volatility;
 	}
 
@@ -53,9 +53,9 @@ export default class ExtendedBS implements ExtendedBSParams {
 	dParam(dType: "1" | "2"): number {
 		const firstTerm =
 			math.log<number>(math.divide(this.spot, this.strike)) +
-			(this.riskFreeRate - this.repoRate) * this.timeToMaturity;
+			(this.riskFreeRate - this.repoRate) * this.termToMaturity;
 		const secondTerm =
-			this.volatility * (math.sqrt(this.timeToMaturity) as number);
+			this.volatility * (math.sqrt(this.termToMaturity) as number);
 		const thirdTerm = 0.5 * secondTerm;
 
 		return dType === "1"
@@ -72,22 +72,22 @@ export default class ExtendedBS implements ExtendedBSParams {
 			// European Call Option
 			const firstTerm =
 				this.spot *
-				math.exp(0 - this.repoRate * this.timeToMaturity) *
+				math.exp(0 - this.repoRate * this.termToMaturity) *
 				standardNormalCdf(this.dParam("1"));
 			const secondTerm =
 				this.spot *
-				math.exp(0 - this.riskFreeRate * this.timeToMaturity) *
+				math.exp(0 - this.riskFreeRate * this.termToMaturity) *
 				standardNormalCdf(this.dParam("2"));
 			return firstTerm - secondTerm;
 		}
 		// European Put Option
 		const firstTerm =
 			this.spot *
-			math.exp(0 - this.riskFreeRate * this.timeToMaturity) *
+			math.exp(0 - this.riskFreeRate * this.termToMaturity) *
 			standardNormalCdf(0 - this.dParam("2"));
 		const secondTerm =
 			this.spot *
-			math.exp(0 - this.repoRate * this.timeToMaturity) *
+			math.exp(0 - this.repoRate * this.termToMaturity) *
 			standardNormalCdf(0 - this.dParam("1"));
 		return firstTerm - secondTerm;
 	}
@@ -100,8 +100,8 @@ export default class ExtendedBS implements ExtendedBSParams {
 	vega(): number {
 		const constTerm = math.divide(
 			this.spot *
-				math.exp(0 - this.repoRate * this.timeToMaturity) *
-				(math.sqrt(this.timeToMaturity) as number),
+				math.exp(0 - this.repoRate * this.termToMaturity) *
+				(math.sqrt(this.termToMaturity) as number),
 			math.sqrt(2 * math.pi) as number
 		);
 		const expTerm = math.exp(

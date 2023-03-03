@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import ExtendedBSView from "view/ExtendedBS";
+import ExtendedBSView from "./view/ExtendedBSView";
 import IvView from "./view/IvView";
 import Home from "./view/HomeView";
 

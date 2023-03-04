@@ -1,6 +1,6 @@
 import { create, all } from "mathjs";
 import cdf from "@stdlib/stats-base-dists-normal-cdf";
-import { ExtendedBSParams } from "./input";
+import { ExtendedBSParams } from ".";
 
 /**
  * Instance of mathjs

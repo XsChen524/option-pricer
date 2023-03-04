@@ -1,0 +1,24 @@
+.input-form-row {
+	width: 100%;
+	margin-bottom: 10px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+}
+
+.input-form-col {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	flex-wrap: wrap;
+}
+
+.input-form-row button {
+	min-width: 100px;
+	background-color: #002766;
+}
+
+.result-table span {
+	color: #002766;
+}

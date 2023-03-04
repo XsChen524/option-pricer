@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Row, Select, Table } from "antd";
-import { ColumnsType } from "antd/es/table";
-import { ExtendedBSParams, ExtendedBSRawParams } from "service";
-import ExtendedBS from "service/extendedBs";
-import "../style/view/extendedBs.css";
+import type { ColumnsType } from "antd/es/table";
+import { ImpVolParams, ImpVolRawParams } from "service";
+import newtonMethod from "service/newtonMethod";
 import { parseRawParams } from "utils/utils";
+import "../style/view/impVol.css";
 
 const layout = {
 	labelCol: { span: 8 },
@@ -39,31 +39,35 @@ const ResultColumns: ColumnsType<ResultDataType> = [
 	},
 ];
 
-const parseData = (ebs: ExtendedBSParams | undefined): ResultDataType[] => {
-	if (ebs) {
+const parseData = (
+	impVolParams: ImpVolParams | undefined
+): ResultDataType[] => {
+	if (impVolParams) {
 		return [
 			{
 				key1: "Spot Price",
-				value1: ebs.spot,
-				key2: "Strike",
-				value2: ebs.strike,
+				value1: impVolParams.spot,
+				key2: "Premium",
+				value2: impVolParams.value,
 			},
 			{
-				key1: "Term to Maturity",
-				value1: ebs.termToMaturity,
-				key2: "Risk-Free Rate",
-				value2: ebs.riskFreeRate,
+				key1: "Strike",
+				value1: impVolParams.strike,
+				key2: "Term to Maturity",
+				value2: impVolParams.termToMaturity,
 			},
 			{
-				key1: "Repo Rate",
-				value1: ebs.repoRate,
-				key2: "Volatility",
-				value2: ebs.volatility,
+				key1: "Risk-Free Rate",
+				value1: impVolParams.riskFreeRate,
+				key2: "Repo Rate",
+				value2: impVolParams.repoRate,
 			},
 			{
 				key1: "Option Type",
 				value1:
-					ebs.optionType === "C" ? "European Call" : "European Put",
+					impVolParams.optionType === "C"
+						? "European Call"
+						: "European Put",
 			},
 		];
 	}
@@ -71,23 +75,25 @@ const parseData = (ebs: ExtendedBSParams | undefined): ResultDataType[] => {
 };
 
 const ResultTable: React.FunctionComponent<{
-	value: number;
-	ebsParams: ExtendedBSParams | undefined;
-}> = (props: { value: number; ebsParams: ExtendedBSParams | undefined }) => {
+	impVolParams: ImpVolParams | undefined;
+	impVol: number;
+}> = (props: { impVolParams: ImpVolParams | undefined; impVol: number }) => {
 	const tableTitle = () => {
-		return <h3>Option value by Extened Black Scholes: {props.value}</h3>;
+		return (
+			<h3>Implied Volatility by Newton-Raphson Method: {props.impVol}</h3>
+		);
 	};
 
 	return (
 		<>
 			{" "}
-			{props.ebsParams ? (
+			{typeof props.impVolParams !== "undefined" ? (
 				<Table
 					className="result-table"
 					bordered
 					columns={ResultColumns}
 					showHeader={false}
-					dataSource={parseData(props.ebsParams)}
+					dataSource={parseData(props.impVolParams)}
 					size="small"
 					title={tableTitle}
 					pagination={false}
@@ -97,27 +103,27 @@ const ResultTable: React.FunctionComponent<{
 	);
 };
 
-const ExtendedBSView: React.FunctionComponent<{}> = () => {
-	const [ebsParams, setEbsParams] = useState<ExtendedBSParams | undefined>(
+const ImpVolView: React.FunctionComponent<{}> = () => {
+	const [impVolParams, setImpVolParams] = useState<ImpVolParams | undefined>(
 		undefined
 	);
-	const [ebs, setEbs] = useState<ExtendedBS | undefined>(undefined);
+	const [impVol, setImpVol] = useState<number | undefined>(undefined);
+
 	const [form] = Form.useForm();
 
 	useEffect(() => {
-		if (typeof ebsParams !== "undefined") setEbs(new ExtendedBS(ebsParams));
-	}, [ebsParams]);
+		if (typeof impVolParams !== "undefined")
+			setImpVol(newtonMethod(impVolParams));
+	}, [impVolParams]);
 
-	const onFinish = (value: ExtendedBSRawParams) => {
-		setEbsParams(
-			parseRawParams<ExtendedBSRawParams, ExtendedBSParams>(value)
-		);
+	const onFinish = (value: ImpVolRawParams) => {
+		setImpVolParams(parseRawParams<ImpVolRawParams, ImpVolParams>(value));
 	};
 
 	const onReset = () => {
 		form.resetFields();
-		setEbsParams(undefined);
-		setEbs(undefined);
+		setImpVolParams(undefined);
+		setImpVol(undefined);
 	};
 
 	return (
@@ -127,6 +133,13 @@ const ExtendedBSView: React.FunctionComponent<{}> = () => {
 					<Form.Item
 						name="spot"
 						label="Spot Price"
+						rules={[{ required: true }]}
+					>
+						<Input prefix="$" type="number" step="0.01" />
+					</Form.Item>
+					<Form.Item
+						name="value"
+						label="Premium"
 						rules={[{ required: true }]}
 					>
 						<Input prefix="$" type="number" step="0.01" />
@@ -161,13 +174,7 @@ const ExtendedBSView: React.FunctionComponent<{}> = () => {
 					>
 						<Input type="number" step="0.01" />
 					</Form.Item>
-					<Form.Item
-						name="volatility"
-						label="Volatility"
-						rules={[{ required: true }]}
-					>
-						<Input type="number" step="0.01" />
-					</Form.Item>
+
 					<Form.Item
 						name="optionType"
 						label="Type"
@@ -205,12 +212,12 @@ const ExtendedBSView: React.FunctionComponent<{}> = () => {
 					</Form.Item>
 				</Col>
 			</Row>
-			{typeof ebs !== "undefined" ? (
+			{typeof impVol !== "undefined" ? (
 				<Row>
 					<Col>
 						<ResultTable
-							ebsParams={ebsParams}
-							value={ebs.vanilla()}
+							impVolParams={impVolParams}
+							impVol={impVol}
 						/>
 					</Col>
 				</Row>
@@ -219,4 +226,4 @@ const ExtendedBSView: React.FunctionComponent<{}> = () => {
 	);
 };
 
-export default ExtendedBSView;
+export default ImpVolView;

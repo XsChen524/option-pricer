@@ -4,7 +4,7 @@ import "../style/view/home.css";
 const Home: React.FunctionComponent<{}> = () => {
 	return (
 		<div id="home-view-container">
-			<p>Hello</p>
+			<p>This is a option pricer app.</p>
 		</div>
 	);
 };

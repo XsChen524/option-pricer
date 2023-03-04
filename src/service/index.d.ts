@@ -16,3 +16,23 @@ export interface ExtendedBSParams {
 	volatility: number;
 	optionType: "C" | "P";
 }
+
+export interface ImpVolParams {
+	spot: number;
+	strike: number;
+	termToMaturity: number;
+	riskFreeRate: number;
+	repoRate: number;
+	optionType: "C" | "P";
+	value: number;
+}
+
+export interface ImpVolRawParams {
+	spot: number;
+	strike: number;
+	termToMaturity: number;
+	riskFreeRate: number;
+	repoRate: number;
+	optionType: "C" | "P";
+	value: number;
+}

@@ -12,6 +12,7 @@ const layout = {
 };
 
 interface ResultDataType {
+	key: string;
 	key1: string;
 	value1: number | string;
 	key2?: string;
@@ -45,24 +46,28 @@ const parseData = (
 	if (impVolParams) {
 		return [
 			{
+				key: "1",
 				key1: "Spot Price",
 				value1: impVolParams.spot,
 				key2: "Premium",
 				value2: impVolParams.value,
 			},
 			{
+				key: "2",
 				key1: "Strike",
 				value1: impVolParams.strike,
 				key2: "Term to Maturity",
 				value2: impVolParams.termToMaturity,
 			},
 			{
+				key: "3",
 				key1: "Risk-Free Rate",
 				value1: impVolParams.riskFreeRate,
 				key2: "Repo Rate",
 				value2: impVolParams.repoRate,
 			},
 			{
+				key: "4",
 				key1: "Option Type",
 				value1:
 					impVolParams.optionType === "C"

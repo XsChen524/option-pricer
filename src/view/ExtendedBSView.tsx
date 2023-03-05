@@ -12,6 +12,7 @@ const layout = {
 };
 
 interface ResultDataType {
+	key: string;
 	key1: string;
 	value1: number | string;
 	key2?: string;
@@ -43,24 +44,28 @@ const parseData = (ebs: ExtendedBSParams | undefined): ResultDataType[] => {
 	if (ebs) {
 		return [
 			{
+				key: "1",
 				key1: "Spot Price",
 				value1: ebs.spot,
 				key2: "Strike",
 				value2: ebs.strike,
 			},
 			{
+				key: "2",
 				key1: "Term to Maturity",
 				value1: ebs.termToMaturity,
 				key2: "Risk-Free Rate",
 				value2: ebs.riskFreeRate,
 			},
 			{
+				key: "3",
 				key1: "Repo Rate",
 				value1: ebs.repoRate,
 				key2: "Volatility",
 				value2: ebs.volatility,
 			},
 			{
+				key: "4",
 				key1: "Option Type",
 				value1:
 					ebs.optionType === "C" ? "European Call" : "European Put",

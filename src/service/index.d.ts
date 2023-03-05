@@ -28,11 +28,11 @@ export interface ImpVolParams {
 }
 
 export interface ImpVolRawParams {
-	spot: number;
-	strike: number;
-	termToMaturity: number;
-	riskFreeRate: number;
-	repoRate: number;
-	optionType: "C" | "P";
-	value: number;
+	spot: string;
+	strike: string;
+	termToMaturity: string;
+	riskFreeRate: string;
+	repoRate: string;
+	optionType: string;
+	value: string;
 }

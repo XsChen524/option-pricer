@@ -40,6 +40,15 @@ const MainLayout: React.FC<{}> = () => {
 				navigate("iv");
 			},
 		},
+		{
+			key: "4",
+			icon: React.createElement(FunctionOutlined),
+			label: "Closed Form Geometric",
+			onClick: () => {
+				setTitle("Closed Form Geometric");
+				navigate("cfg");
+			},
+		},
 	];
 
 	return (

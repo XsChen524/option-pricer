@@ -36,3 +36,23 @@ export interface ImpVolRawParams {
 	optionType: string;
 	value: string;
 }
+
+export interface CFGeoParams {
+	spot: number;
+	strike: number;
+	timeToMaturity: number;
+	riskFreeRate: number;
+	volatility: number;
+	observeTime: number;
+	optionType: "C" | "P";
+}
+
+export interface CFGeoRawParams {
+	spot: string;
+	strike: string;
+	timeToMaturity: string;
+	riskFreeRate: string;
+	volatility: string;
+	observeTime: string;
+	optionType: string;
+}

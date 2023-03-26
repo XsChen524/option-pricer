@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Row, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import "../style/view/global.css";
-import { CFGeoParams, CFGeoRawParams } from "service";
-import CFGeoAsian from "service/closedformGeometricAsian";
+import { BGParams, BGRawParams } from "service";
+import BasketGeometric from "service/basketGeo";
 import { parseRawParams } from "utils/utils";
 
 const layout = {
@@ -40,34 +40,41 @@ const ResultColumns: ColumnsType<ResultDataType> = [
 	},
 ];
 
-const parseData = (cfg: CFGeoParams | undefined): ResultDataType[] => {
-	if (cfg) {
+const parseData = (bg: BGParams | undefined): ResultDataType[] => {
+	if (bg) {
 		return [
 			{
 				key: "1",
-				key1: "Spot Price",
-				value1: cfg.spot,
-				key2: "Strike",
-				value2: cfg.strike,
+				key1: "Spot Price 1",
+				value1: bg.spot1,
+				key2: "Spot Price 2",
+				value2: bg.spot2,
 			},
 			{
 				key: "2",
-				key1: "Time to Maturity",
-				value1: cfg.timeToMaturity,
-				key2: "Risk-Free Rate",
-				value2: cfg.riskFreeRate,
+				key1: "Volatility 1",
+				value1: bg.volatility1,
+				key2: "Volatility 2",
+				value2: bg.volatility2,
 			},
 			{
 				key: "3",
-				key1: "Volatility",
-				value1: cfg.volatility,
-				key2: "N",
-				value2: cfg.observeTime,
+				key1: "Risk-free Rate",
+				value1: bg.riskFreeRate,
+				key2: "Time to Maturity",
+				value2: bg.timeToMaturity,
 			},
 			{
 				key: "4",
+				key1: "Strike",
+				value1: bg.strike,
+				key2: "Correlation",
+				value2: bg.correlation,
+			},
+			{
+				key: "5",
 				key1: "Option Type",
-				value1: cfg.optionType === "C" ? "Call" : "Put",
+				value1: bg.optionType === "C" ? "Call" : "Put",
 			},
 		];
 	}
@@ -76,22 +83,22 @@ const parseData = (cfg: CFGeoParams | undefined): ResultDataType[] => {
 
 const ResultTable: React.FunctionComponent<{
 	value: number;
-	cfgParams: CFGeoParams | undefined;
-}> = (props: { value: number; cfgParams: CFGeoParams | undefined }) => {
+	bgParams: BGParams | undefined;
+}> = (props: { value: number; bgParams: BGParams | undefined }) => {
 	const tableTitle = () => {
-		return <h3>Price of Geometric Asian Option: {props.value}</h3>;
+		return <h3>Price of Geometric Basket Option: {props.value}</h3>;
 	};
 
 	return (
 		<>
 			{" "}
-			{props.cfgParams ? (
+			{props.bgParams ? (
 				<Table
 					className="result-table"
 					bordered
 					columns={ResultColumns}
 					showHeader={false}
-					dataSource={parseData(props.cfgParams)}
+					dataSource={parseData(props.bgParams)}
 					size="small"
 					title={tableTitle}
 					pagination={false}
@@ -101,25 +108,24 @@ const ResultTable: React.FunctionComponent<{
 	);
 };
 
-const GeometricView: React.FunctionComponent<{}> = () => {
-	const [cfgParams, setCfgParams] = useState<CFGeoParams | undefined>(
-		undefined
-	);
-	const [cfg, setCfg] = useState<CFGeoAsian | undefined>(undefined);
+const BasketGeoView: React.FunctionComponent<{}> = () => {
+	const [bgParams, setBgParams] = useState<BGParams | undefined>(undefined);
+	const [bg, setBg] = useState<BasketGeometric | undefined>(undefined);
 	const [form] = Form.useForm();
 
 	useEffect(() => {
-		if (typeof cfgParams !== "undefined") setCfg(new CFGeoAsian(cfgParams));
-	}, [cfgParams]);
+		if (typeof bgParams !== "undefined")
+			setBg(new BasketGeometric(bgParams));
+	}, [bgParams]);
 
-	const onFinish = (value: CFGeoRawParams) => {
-		setCfgParams(parseRawParams<CFGeoRawParams, CFGeoParams>(value));
+	const onFinish = (value: BGRawParams) => {
+		setBgParams(parseRawParams<BGRawParams, BGParams>(value));
 	};
 
 	const onReset = () => {
 		form.resetFields();
-		setCfgParams(undefined);
-		setCfg(undefined);
+		setBgParams(undefined);
+		setBg(undefined);
 	};
 
 	return (
@@ -127,11 +133,25 @@ const GeometricView: React.FunctionComponent<{}> = () => {
 			<Row className="input-form-row" gutter={16}>
 				<Col className="gutter-row input-form-col" span={12}>
 					<Form.Item
-						name="spot"
-						label="Spot Price"
+						name="spot1"
+						label="Spot Price 1"
 						rules={[{ required: true }]}
 					>
 						<Input prefix="$" type="number" step="0.01" />
+					</Form.Item>
+					<Form.Item
+						name="volatility1"
+						label="Volatility1"
+						rules={[{ required: true }]}
+					>
+						<Input type="number" step="0.01" />
+					</Form.Item>
+					<Form.Item
+						name="riskFreeRate"
+						label="Risk-free Rate"
+						rules={[{ required: true }]}
+					>
+						<Input type="number" step="0.01" />
 					</Form.Item>
 					<Form.Item
 						name="strike"
@@ -140,6 +160,22 @@ const GeometricView: React.FunctionComponent<{}> = () => {
 					>
 						<Input prefix="$" type="number" step="0.01" />
 					</Form.Item>
+				</Col>
+				<Col className="gutter-row input-form-col" span={12}>
+					<Form.Item
+						name="spot2"
+						label="Spot Price 2"
+						rules={[{ required: true }]}
+					>
+						<Input prefix="$" type="number" step="0.01" />
+					</Form.Item>
+					<Form.Item
+						name="volatility2"
+						label="Volatility2"
+						rules={[{ required: true }]}
+					>
+						<Input type="number" step="0.01" />
+					</Form.Item>
 					<Form.Item
 						name="timeToMaturity"
 						label="TM in year"
@@ -147,28 +183,12 @@ const GeometricView: React.FunctionComponent<{}> = () => {
 					>
 						<Input type="number" step="0.01" />
 					</Form.Item>
-				</Col>
-				<Col className="gutter-row input-form-col" span={12}>
 					<Form.Item
-						name="riskFreeRate"
-						label="Risk-Free"
+						name="correlation"
+						label="Correlation"
 						rules={[{ required: true }]}
 					>
 						<Input type="number" step="0.01" />
-					</Form.Item>
-					<Form.Item
-						name="volatility"
-						label="Volatility"
-						rules={[{ required: true }]}
-					>
-						<Input type="number" step="0.01" />
-					</Form.Item>
-					<Form.Item
-						name="observeTime"
-						label="N"
-						rules={[{ required: true }]}
-					>
-						<Input type="number" />
 					</Form.Item>
 					<Form.Item
 						name="optionType"
@@ -203,13 +223,10 @@ const GeometricView: React.FunctionComponent<{}> = () => {
 					</Form.Item>
 				</Col>
 			</Row>
-			{typeof cfg !== "undefined" ? (
+			{typeof bg !== "undefined" ? (
 				<Row>
 					<Col>
-						<ResultTable
-							cfgParams={cfgParams}
-							value={cfg.price()}
-						/>
+						<ResultTable bgParams={bgParams} value={bg.price()} />
 					</Col>
 				</Row>
 			) : null}
@@ -217,4 +234,4 @@ const GeometricView: React.FunctionComponent<{}> = () => {
 	);
 };
 
-export default GeometricView;
+export default BasketGeoView;

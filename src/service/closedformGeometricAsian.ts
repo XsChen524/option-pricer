@@ -83,14 +83,12 @@ export default class CFGeoAsian implements CFGeoParams {
 	 */
 	price(): number {
 		const LNprefix = <number>(
-			math.pow(math.e, -this.riskFreeRate * this.timeToMaturity)
+			math.exp(-this.riskFreeRate * this.timeToMaturity)
 		);
 		if (this.optionType === "C") {
 			const firstTerm =
 				this.spot *
-					<number>(
-						math.pow(math.e, this.estiMu() * this.timeToMaturity)
-					) *
+					<number>math.exp(this.estiMu() * this.timeToMaturity) *
 					standardNormalCdf(this.dParam("1")) -
 				this.strike * standardNormalCdf(this.dParam("2"));
 			// Call option
@@ -99,7 +97,7 @@ export default class CFGeoAsian implements CFGeoParams {
 		const firstTerm =
 			this.strike * standardNormalCdf(-this.dParam("2")) -
 			this.spot *
-				<number>math.pow(math.e, this.estiMu() * this.timeToMaturity) *
+				<number>math.exp(this.estiMu() * this.timeToMaturity) *
 				standardNormalCdf(-this.dParam("1"));
 		return LNprefix * firstTerm;
 	}

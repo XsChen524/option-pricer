@@ -49,6 +49,15 @@ const MainLayout: React.FC<{}> = () => {
 				navigate("cfg");
 			},
 		},
+		{
+			key: "5",
+			icon: React.createElement(FunctionOutlined),
+			label: "Basket Geometric",
+			onClick: () => {
+				setTitle("Basket Geometric");
+				navigate("bg");
+			},
+		},
 	];
 
 	return (

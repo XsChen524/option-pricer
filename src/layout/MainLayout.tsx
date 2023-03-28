@@ -58,6 +58,15 @@ const MainLayout: React.FC<{}> = () => {
 				navigate("bg");
 			},
 		},
+		{
+			key: "6",
+			icon: React.createElement(FunctionOutlined),
+			label: "Monte Carlo Arithmetic Asian Option",
+			onClick: () => {
+				setTitle("Monte Carlo Arithmetic Asian Option");
+				navigate("mc");
+			},
+		},
 	];
 
 	return (

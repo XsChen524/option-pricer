@@ -80,3 +80,27 @@ export interface BGRawParams {
 	correlation: string;
 	optionType: string;
 }
+
+export interface MCAsianParams {
+	spot: number;
+	strike: number;
+	timeToMaturity: number;
+	riskFreeRate: number;
+	volatility: number;
+	observeTime: number;
+	path: number;
+	method: "MC" | "Geo";
+	optionType: "C" | "P";
+}
+
+export interface MCAsianRawParams {
+	spot: string;
+	strike: string;
+	timeToMaturity: string;
+	riskFreeRate: string;
+	volatility: string;
+	observeTime: string;
+	path: string;
+	method: string;
+	optionType: string;
+}

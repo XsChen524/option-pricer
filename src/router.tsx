@@ -5,6 +5,7 @@ import ImpVolView from "./view/ImpVolView";
 import Home from "./view/HomeView";
 import GeometricView from "./view/CFGeoView";
 import BasketGeoView from "./view/BasketGeoView";
+import MCAsianView from "./view/MCAsianView";
 
 const AppRouter: React.FunctionComponent<{}> = () => {
 	return (
@@ -14,6 +15,7 @@ const AppRouter: React.FunctionComponent<{}> = () => {
 			<Route path="iv" element={<ImpVolView />} />
 			<Route path="cfg" element={<GeometricView />} />
 			<Route path="bg" element={<BasketGeoView />} />
+			<Route path="mc" element={<MCAsianView />} />
 		</Routes>
 	);
 };

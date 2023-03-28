@@ -2,7 +2,14 @@
   "name": "option-pricer",
   "version": "0.1.0",
   "description": "FITE7405 Assignment: Option Pricer",
-  "author": "Chen Xingsheng",
+  "contributors": [
+    {
+      "name": "Chen Xingsheng"
+    },
+    {
+      "name": "Xie Ning"
+    }
+  ],
   "main": "./src/main/main.ts",
   "scripts": {
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",

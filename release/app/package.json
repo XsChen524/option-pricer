@@ -3,7 +3,14 @@
   "license": "MIT",
   "version": "0.1.0",
   "description": "Option Pricer",
-  "author": "Chen Xingsheng",
+  "contributors": [
+    {
+      "name": "Chen Xingsheng"
+    },
+    {
+      "name": "Xie Ning"
+    }
+  ],
   "main": "./dist/main/main.js",
   "scripts": {
     "rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",

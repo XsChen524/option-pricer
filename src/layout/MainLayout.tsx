@@ -84,7 +84,7 @@ const MainLayout: React.FC<{}> = () => {
 					</div>
 				</Content>
 				<Footer style={{ textAlign: "center" }}>
-					© 2023 Chen Xingsheng
+					© 2023 Chen Xingsheng, Xie Ning
 				</Footer>
 			</Layout>
 		</Layout>

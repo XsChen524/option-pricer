@@ -40,6 +40,33 @@ const MainLayout: React.FC<{}> = () => {
 				navigate("iv");
 			},
 		},
+		{
+			key: "4",
+			icon: React.createElement(FunctionOutlined),
+			label: "Closed Form Geometric",
+			onClick: () => {
+				setTitle("Closed Form Geometric");
+				navigate("cfg");
+			},
+		},
+		{
+			key: "5",
+			icon: React.createElement(FunctionOutlined),
+			label: "Basket Geometric",
+			onClick: () => {
+				setTitle("Basket Geometric");
+				navigate("bg");
+			},
+		},
+		{
+			key: "6",
+			icon: React.createElement(FunctionOutlined),
+			label: "Monte Carlo Arithmetic Asian Option",
+			onClick: () => {
+				setTitle("Monte Carlo Arithmetic Asian Option");
+				navigate("mc");
+			},
+		},
 	];
 
 	return (

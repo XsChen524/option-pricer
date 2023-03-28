@@ -3,7 +3,7 @@ import { Button, Col, Form, Input, Row, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { ExtendedBSParams, ExtendedBSRawParams } from "service";
 import ExtendedBS from "service/extendedBs";
-import "../style/view/extendedBs.css";
+import "../style/view/global.css";
 import { parseRawParams } from "utils/utils";
 
 const layout = {

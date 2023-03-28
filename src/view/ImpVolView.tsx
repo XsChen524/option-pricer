@@ -4,7 +4,7 @@ import type { ColumnsType } from "antd/es/table";
 import { ImpVolParams, ImpVolRawParams } from "service";
 import newtonMethod from "service/newtonMethod";
 import { parseRawParams } from "utils/utils";
-import "../style/view/impVol.css";
+import "../style/view/global.css";
 
 const layout = {
 	labelCol: { span: 8 },

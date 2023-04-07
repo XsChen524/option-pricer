@@ -67,6 +67,15 @@ const MainLayout: React.FC<{}> = () => {
 				navigate("mc");
 			},
 		},
+		{
+			key: "7",
+			icon: React.createElement(FunctionOutlined),
+			label: "Monte Carlo Arithmetic Mean Basket Option",
+			onClick: () => {
+				setTitle("Monte Carlo Arithmetic Mean Basket Option");
+				navigate("mb");
+			},
+		},
 	];
 
 	return (

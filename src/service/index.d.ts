@@ -104,3 +104,31 @@ export interface MCAsianRawParams {
 	method: string;
 	optionType: string;
 }
+
+export interface MCBasketParams {
+	spot1: number;
+	spot2: number;
+	volatility1: number;
+	volatility2: number;
+	riskFreeRate: number;
+	timeToMaturity: number;
+	strike: number;
+	correlation: number;
+	optionType: "C" | "P";
+	path: number;
+	method: "MC" | "Geo";
+}
+
+export interface MCBasketRawParams {
+	spot1: string;
+	spot2: string;
+	volatility1: string;
+	volatility2: string;
+	riskFreeRate: string;
+	timeToMaturity: string;
+	strike: string;
+	correlation: string;
+	optionType: string;
+	path: string;
+	method: string;
+}

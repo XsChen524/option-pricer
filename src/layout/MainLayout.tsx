@@ -76,6 +76,24 @@ const MainLayout: React.FC<{}> = () => {
 				navigate("mb");
 			},
 		},
+		{
+			key: "8",
+			icon: React.createElement(FunctionOutlined),
+			label: "Binomial Tree",
+			onClick: () => {
+				setTitle("Binomial Tree for American Option");
+				navigate("bt");
+			},
+		},
+		{
+			key: "9",
+			icon: React.createElement(FunctionOutlined),
+			label: "KIKO Put",
+			onClick: () => {
+				setTitle("Quasi-Monte Carlo for KIKO Put");
+				navigate("kiko");
+			},
+		},
 	];
 
 	return (

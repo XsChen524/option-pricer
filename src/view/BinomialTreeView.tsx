@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Row, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { ExtendedBSParams, ExtendedBSRawParams } from "service";
-import ExtendedBS from "service/extendedBs";
+import { AmericanParams, AmericanRawParams } from "service";
 import "../style/view/global.css";
 import { parseRawParams } from "utils/utils";
+import BinomialTree from "service/binomialTree";
 
 const layout = {
 	labelCol: { span: 8 },
@@ -40,7 +40,7 @@ const ResultColumns: ColumnsType<ResultDataType> = [
 	},
 ];
 
-const parseData = (ebs: ExtendedBSParams | undefined): ResultDataType[] => {
+const parseData = (ebs: AmericanParams | undefined): ResultDataType[] => {
 	if (ebs) {
 		return [
 			{
@@ -53,22 +53,22 @@ const parseData = (ebs: ExtendedBSParams | undefined): ResultDataType[] => {
 			{
 				key: "2",
 				key1: "Term to Maturity",
-				value1: ebs.termToMaturity,
+				value1: ebs.timeToMaturity,
 				key2: "Risk-Free Rate",
 				value2: ebs.riskFreeRate,
 			},
 			{
 				key: "3",
-				key1: "Repo Rate",
-				value1: ebs.repoRate,
-				key2: "Volatility",
-				value2: ebs.volatility,
+				key1: "Volatility",
+				value1: ebs.volatility,
+				key2: "Number of Steps",
+				value2: ebs.steps,
 			},
 			{
 				key: "4",
 				key1: "Option Type",
 				value1:
-					ebs.optionType === "C" ? "European Call" : "European Put",
+					ebs.optionType === "C" ? "American Call" : "American Put",
 			},
 		];
 	}
@@ -77,22 +77,22 @@ const parseData = (ebs: ExtendedBSParams | undefined): ResultDataType[] => {
 
 const ResultTable: React.FunctionComponent<{
 	value: number;
-	ebsParams: ExtendedBSParams | undefined;
-}> = (props: { value: number; ebsParams: ExtendedBSParams | undefined }) => {
+	amerParams: AmericanParams | undefined;
+}> = (props: { value: number; amerParams: AmericanParams | undefined }) => {
 	const tableTitle = () => {
-		return <h3>Option value by Extened Black Scholes: {props.value}</h3>;
+		return <h3>American Option price by Binomial Tree: {props.value}</h3>;
 	};
 
 	return (
 		<>
 			{" "}
-			{props.ebsParams ? (
+			{props.amerParams ? (
 				<Table
 					className="result-table"
 					bordered
 					columns={ResultColumns}
 					showHeader={false}
-					dataSource={parseData(props.ebsParams)}
+					dataSource={parseData(props.amerParams)}
 					size="small"
 					title={tableTitle}
 					pagination={false}
@@ -103,26 +103,31 @@ const ResultTable: React.FunctionComponent<{
 };
 
 const BinomialTreeView: React.FunctionComponent<{}> = () => {
-	const [ebsParams, setEbsParams] = useState<ExtendedBSParams | undefined>(
+	const [amerParams, setAmerParams] = useState<AmericanParams | undefined>(
 		undefined
 	);
-	const [ebs, setEbs] = useState<ExtendedBS | undefined>(undefined);
+	const [amer, setAmer] = useState<BinomialTree | undefined>(undefined);
 	const [form] = Form.useForm();
 
 	useEffect(() => {
-		if (typeof ebsParams !== "undefined") setEbs(new ExtendedBS(ebsParams));
-	}, [ebsParams]);
+		if (amerParams) {
+			console.log(amerParams);
+			setAmer(new BinomialTree(amerParams));
+		}
+	}, [amerParams]);
 
-	const onFinish = (value: ExtendedBSRawParams) => {
-		setEbsParams(
-			parseRawParams<ExtendedBSRawParams, ExtendedBSParams>(value)
-		);
+	useEffect(() => {
+		if (amer) amer.debug();
+	}, [amer]);
+
+	const onFinish = (value: AmericanRawParams) => {
+		setAmerParams(parseRawParams<AmericanRawParams, AmericanParams>(value));
 	};
 
 	const onReset = () => {
 		form.resetFields();
-		setEbsParams(undefined);
-		setEbs(undefined);
+		setAmerParams(undefined);
+		setAmer(undefined);
 	};
 
 	return (
@@ -144,8 +149,8 @@ const BinomialTreeView: React.FunctionComponent<{}> = () => {
 						<Input prefix="$" type="number" step="0.01" />
 					</Form.Item>
 					<Form.Item
-						name="termToMaturity"
-						label="TM in year"
+						name="timeToMaturity"
+						label="TTM in year"
 						rules={[{ required: true }]}
 					>
 						<Input type="number" step="0.01" />
@@ -160,18 +165,18 @@ const BinomialTreeView: React.FunctionComponent<{}> = () => {
 						<Input type="number" step="0.01" />
 					</Form.Item>
 					<Form.Item
-						name="repoRate"
-						label="Repo Rate"
-						rules={[{ required: true }]}
-					>
-						<Input type="number" step="0.01" />
-					</Form.Item>
-					<Form.Item
 						name="volatility"
 						label="Volatility"
 						rules={[{ required: true }]}
 					>
 						<Input type="number" step="0.01" />
+					</Form.Item>
+					<Form.Item
+						name="steps"
+						label="Steps"
+						rules={[{ required: true }]}
+					>
+						<Input type="number" step="1" />
 					</Form.Item>
 					<Form.Item
 						name="optionType"
@@ -180,10 +185,10 @@ const BinomialTreeView: React.FunctionComponent<{}> = () => {
 					>
 						<Select placeholder="Option Type" allowClear>
 							<Select.Option value="C">
-								European Call
+								American Call
 							</Select.Option>
 							<Select.Option value="P">
-								European Put
+								American Put
 							</Select.Option>
 						</Select>
 					</Form.Item>
@@ -210,13 +215,10 @@ const BinomialTreeView: React.FunctionComponent<{}> = () => {
 					</Form.Item>
 				</Col>
 			</Row>
-			{typeof ebs !== "undefined" ? (
+			{typeof amer !== "undefined" ? (
 				<Row>
 					<Col>
-						<ResultTable
-							ebsParams={ebsParams}
-							value={ebs.vanilla()}
-						/>
+						<ResultTable amerParams={amerParams} value={0} />
 					</Col>
 				</Row>
 			) : null}

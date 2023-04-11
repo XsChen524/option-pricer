@@ -132,3 +132,23 @@ export interface MCBasketRawParams {
 	path: string;
 	method: string;
 }
+
+export interface AmericanParams {
+	spot: number;
+	strike: number;
+	timeToMaturity: number;
+	riskFreeRate: number;
+	volatility: number;
+	steps: number;
+	optionType: "C" | "P";
+}
+
+export interface AmericanRawParams {
+	spot: string;
+	strike: string;
+	timeToMaturity: string;
+	riskFreeRate: string;
+	volatility: string;
+	steps: string;
+	optionType: string;
+}

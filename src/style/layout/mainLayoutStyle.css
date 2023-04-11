@@ -22,6 +22,7 @@
 }
 
 #main-layout-content-container {
+	padding: 20px;
 	min-height: 500px;
 	background-color: white;
 }

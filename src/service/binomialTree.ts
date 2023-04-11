@@ -1,4 +1,3 @@
-import cdf from "@stdlib/stats-base-dists-normal-cdf";
 import { all, create } from "mathjs";
 import { AmericanParams } from "service";
 
@@ -8,13 +7,6 @@ import { AmericanParams } from "service";
 const math = create(all, {
 	number: "number",
 });
-
-/**
- * N(x): standard normal cdf.
- * @param {number} arg input number
- */
-// eslint-disable-next-line no-unused-vars
-const standardNormalCdf: (arg: number) => number = cdf.factory(0, 1);
 
 /**
  * @class BinomialTree
@@ -67,6 +59,7 @@ export default class BinomialTree implements AmericanParams {
 		this.spotTree = [];
 		this.optionTree = [];
 		this.constructSpots(this.spotTree);
+		this.constructOptionTree(this.optionTree);
 	}
 
 	private getFactor(factorType: "up" | "down"): number {
@@ -98,21 +91,100 @@ export default class BinomialTree implements AmericanParams {
 		);
 	}
 
-	private constructSpots(spotTree: number[][]): void {
-		for (let m = 0; m <= this.steps; m += 1) {
-			spotTree[m] = [];
-			for (let n = 0; n <= m; n += 1) {
-				spotTree[m].push(
-					math.multiply(
-						this.spot,
+	private async constructSpots(spotTree: number[][]): Promise<void> {
+		return new Promise<void>((resolve) => {
+			for (let m = 0; m <= this.steps; m += 1) {
+				spotTree[m] = [];
+				for (let n = 0; n <= m; n += 1) {
+					spotTree[m].push(
 						math.multiply(
-							<number>math.pow(this.upFactor, n),
-							<number>math.pow(this.downFactor, m - n)
+							this.spot,
+							math.multiply(
+								<number>math.pow(this.upFactor, n),
+								<number>math.pow(this.downFactor, m - n)
+							)
 						)
-					)
-				);
+					);
+				}
 			}
+			resolve();
+		});
+	}
+
+	private static getIntrinsicValue(
+		optionType: "C" | "P",
+		spot: number,
+		strike: number
+	): number {
+		// American Call
+		if (optionType === "C") {
+			return math.subtract(spot, strike) > 0
+				? math.subtract(spot, strike)
+				: 0;
 		}
+		// American Put
+		return math.subtract(strike, spot) > 0
+			? math.subtract(strike, spot)
+			: 0;
+	}
+
+	private async constructOptionTree(optionTree: number[][]): Promise<void> {
+		return new Promise<void>((resolve) => {
+			for (let m = this.steps; m >= 0; m -= 1) {
+				optionTree[m] = [];
+				for (let n = 0; n <= m; n += 1) {
+					/**
+					 * If m is the last row, no need to consider early exercise
+					 * option value equals to intrinsic value
+					 *
+					 * Orderwise, consider to early exercise if option value less than intrinsic value
+					 * if less than intrinsic value, exercise immediately and get intrinsic value
+					 */
+					if (m === this.steps) {
+						optionTree[m].push(
+							BinomialTree.getIntrinsicValue(
+								this.optionType,
+								this.spotTree[m][n],
+								this.strike
+							)
+						);
+					} else {
+						// Consider early exercise
+						const tmpValue = math.multiply(
+							this.discountFactor,
+							math.add<number>(
+								math.multiply(
+									this.probability,
+									this.optionTree[m + 1][n + 1]
+								),
+								math.multiply(
+									math.subtract(1, this.probability),
+									this.optionTree[m + 1][n]
+								)
+							)
+						);
+						const tmpIntrinsic =
+							this.optionType === "C"
+								? math.subtract(
+										this.spotTree[m][n],
+										this.strike
+								  )
+								: math.subtract(
+										this.strike,
+										this.spotTree[m][n]
+								  );
+						optionTree[m].push(
+							tmpIntrinsic > tmpValue ? tmpIntrinsic : tmpValue
+						);
+					}
+				}
+			}
+			resolve();
+		});
+	}
+
+	getPrice(): number {
+		return this.optionTree[0][0];
 	}
 
 	debug(): void {
@@ -122,5 +194,6 @@ export default class BinomialTree implements AmericanParams {
 		console.log("probability:", this.probability);
 		console.log("DF:", this.discountFactor);
 		console.log("spotTree:", this.spotTree);
+		console.log("optionTree:", this.optionTree);
 	}
 }

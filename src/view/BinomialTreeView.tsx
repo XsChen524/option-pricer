@@ -111,14 +111,9 @@ const BinomialTreeView: React.FunctionComponent<{}> = () => {
 
 	useEffect(() => {
 		if (amerParams) {
-			console.log(amerParams);
 			setAmer(new BinomialTree(amerParams));
 		}
 	}, [amerParams]);
-
-	useEffect(() => {
-		if (amer) amer.debug();
-	}, [amer]);
 
 	const onFinish = (value: AmericanRawParams) => {
 		setAmerParams(parseRawParams<AmericanRawParams, AmericanParams>(value));
@@ -218,7 +213,10 @@ const BinomialTreeView: React.FunctionComponent<{}> = () => {
 			{typeof amer !== "undefined" ? (
 				<Row>
 					<Col>
-						<ResultTable amerParams={amerParams} value={0} />
+						<ResultTable
+							amerParams={amerParams}
+							value={amer.getPrice()}
+						/>
 					</Col>
 				</Row>
 			) : null}

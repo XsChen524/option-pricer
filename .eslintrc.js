@@ -2,9 +2,10 @@ module.exports = {
 	extends: "erb",
 	rules: {
 		// A temporary hack related to IDE not resolving correct package.json
-		"import/prefer-default-export": "off",
+		"compat/compat": "off",
 		"no-array-constructor": "off",
 		"no-console": "off",
+		"import/prefer-default-export": "off",
 		"import/no-extraneous-dependencies": "off",
 		"import/extensions": "off",
 		"import/no-unresolved": "off",

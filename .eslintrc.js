@@ -2,6 +2,7 @@ module.exports = {
 	extends: "erb",
 	rules: {
 		// A temporary hack related to IDE not resolving correct package.json
+		"promise/always-return": "off",
 		"compat/compat": "off",
 		"no-array-constructor": "off",
 		"no-console": "off",

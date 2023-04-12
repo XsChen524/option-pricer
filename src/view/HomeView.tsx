@@ -25,7 +25,7 @@ const Home: React.FunctionComponent<{}> = () => {
 				>
 					<Meta
 						title="React + Electron + Antd"
-						description="Find .tsx files in src"
+						description="A native single-page app"
 					/>
 				</Card>
 				<Card

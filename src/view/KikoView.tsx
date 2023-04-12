@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Row, Select, Table } from "antd";
+import { Button, Col, Form, Input, Row, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { ExtendedBSParams, ExtendedBSRawParams } from "service";
-import ExtendedBS from "service/extendedBs";
+import { KikoParams, KikoRawParams, KikoResult } from "service";
 import "../style/view/global.css";
 import { parseRawParams } from "utils/utils";
+import Kiko from "service/kiko";
 
 const layout = {
 	labelCol: { span: 8 },
@@ -40,35 +40,53 @@ const ResultColumns: ColumnsType<ResultDataType> = [
 	},
 ];
 
-const parseData = (ebs: ExtendedBSParams | undefined): ResultDataType[] => {
-	if (ebs) {
+const parseData = (
+	kikoParams: KikoParams | undefined,
+	kiko: KikoResult | undefined
+): ResultDataType[] => {
+	if (kikoParams && kiko) {
 		return [
 			{
 				key: "1",
 				key1: "Spot Price",
-				value1: ebs.spot,
+				value1: kikoParams.spot,
 				key2: "Strike",
-				value2: ebs.strike,
+				value2: kikoParams.strike,
 			},
 			{
 				key: "2",
-				key1: "Term to Maturity",
-				value1: ebs.termToMaturity,
+				key1: "Time to Maturity",
+				value1: kikoParams.timeToMaturity,
 				key2: "Risk-Free Rate",
-				value2: ebs.riskFreeRate,
+				value2: kikoParams.riskFreeRate,
 			},
 			{
 				key: "3",
-				key1: "Repo Rate",
-				value1: ebs.repoRate,
-				key2: "Volatility",
-				value2: ebs.volatility,
+				key1: "Volatility",
+				value1: kikoParams.volatility,
+				key2: "Rebate",
+				value2: kikoParams.rebate,
 			},
 			{
 				key: "4",
 				key1: "Option Type",
-				value1:
-					ebs.optionType === "C" ? "European Call" : "European Put",
+				value1: "KIKO Put",
+				key2: "Observe Time",
+				value2: kikoParams.observeTime,
+			},
+			{
+				key: "5",
+				key1: "Lower Barrier",
+				value1: kikoParams.lowerBarrier,
+				key2: "Upper Barrier",
+				value2: kikoParams.upperBarrier,
+			},
+			{
+				key: "6",
+				key1: "Std Dev",
+				value1: kiko.std,
+				key2: "Conf Int",
+				value2: `[${kiko.confInt[0]}, ${kiko.confInt[1]}]`,
 			},
 		];
 	}
@@ -76,23 +94,28 @@ const parseData = (ebs: ExtendedBSParams | undefined): ResultDataType[] => {
 };
 
 const ResultTable: React.FunctionComponent<{
-	value: number;
-	ebsParams: ExtendedBSParams | undefined;
-}> = (props: { value: number; ebsParams: ExtendedBSParams | undefined }) => {
+	kikoParams: KikoParams | undefined;
+	kiko: KikoResult | undefined;
+}> = (props: {
+	kikoParams: KikoParams | undefined;
+	kiko: KikoResult | undefined;
+}) => {
 	const tableTitle = () => {
-		return <h3>Option value by Extened Black Scholes: {props.value}</h3>;
+		if (props.kiko)
+			return <h3>KIKO Put value by Quasi-MC: {props.kiko.value}</h3>;
+		return undefined;
 	};
 
 	return (
 		<>
 			{" "}
-			{props.ebsParams ? (
+			{props.kikoParams ? (
 				<Table
 					className="result-table"
 					bordered
 					columns={ResultColumns}
 					showHeader={false}
-					dataSource={parseData(props.ebsParams)}
+					dataSource={parseData(props.kikoParams, props.kiko)}
 					size="small"
 					title={tableTitle}
 					pagination={false}
@@ -103,26 +126,30 @@ const ResultTable: React.FunctionComponent<{
 };
 
 const KikoView: React.FunctionComponent<{}> = () => {
-	const [ebsParams, setEbsParams] = useState<ExtendedBSParams | undefined>(
+	const [kikoParams, setKikoParams] = useState<KikoParams | undefined>(
 		undefined
 	);
-	const [ebs, setEbs] = useState<ExtendedBS | undefined>(undefined);
+	const [kiko, setKiko] = useState<Kiko | undefined>(undefined);
 	const [form] = Form.useForm();
 
 	useEffect(() => {
-		if (typeof ebsParams !== "undefined") setEbs(new ExtendedBS(ebsParams));
-	}, [ebsParams]);
+		if (kikoParams) setKiko(new Kiko(kikoParams));
+	}, [kikoParams]);
 
-	const onFinish = (value: ExtendedBSRawParams) => {
-		setEbsParams(
-			parseRawParams<ExtendedBSRawParams, ExtendedBSParams>(value)
-		);
+	/*
+	useEffect(() => {
+		if (kiko) kiko.debug();
+	}, [kiko]);
+	*/
+
+	const onFinish = (value: KikoRawParams) => {
+		setKikoParams(parseRawParams<KikoRawParams, KikoParams>(value));
 	};
 
 	const onReset = () => {
 		form.resetFields();
-		setEbsParams(undefined);
-		setEbs(undefined);
+		setKikoParams(undefined);
+		setKiko(undefined);
 	};
 
 	return (
@@ -144,24 +171,24 @@ const KikoView: React.FunctionComponent<{}> = () => {
 						<Input prefix="$" type="number" step="0.01" />
 					</Form.Item>
 					<Form.Item
-						name="termToMaturity"
-						label="TM in year"
+						name="timeToMaturity"
+						label="TTM in year"
 						rules={[{ required: true }]}
 					>
 						<Input type="number" step="0.01" />
+					</Form.Item>
+					<Form.Item
+						name="rebate"
+						label="Rebate"
+						rules={[{ required: true }]}
+					>
+						<Input prefix="$" type="number" step="0.01" />
 					</Form.Item>
 				</Col>
 				<Col className="gutter-row input-form-col" span={12}>
 					<Form.Item
 						name="riskFreeRate"
 						label="Risk-Free"
-						rules={[{ required: true }]}
-					>
-						<Input type="number" step="0.01" />
-					</Form.Item>
-					<Form.Item
-						name="repoRate"
-						label="Repo Rate"
 						rules={[{ required: true }]}
 					>
 						<Input type="number" step="0.01" />
@@ -174,18 +201,25 @@ const KikoView: React.FunctionComponent<{}> = () => {
 						<Input type="number" step="0.01" />
 					</Form.Item>
 					<Form.Item
-						name="optionType"
-						label="Type"
+						name="lowerBarrier"
+						label="Lower Barrier"
 						rules={[{ required: true }]}
 					>
-						<Select placeholder="Option Type" allowClear>
-							<Select.Option value="C">
-								European Call
-							</Select.Option>
-							<Select.Option value="P">
-								European Put
-							</Select.Option>
-						</Select>
+						<Input type="number" step="0.01" />
+					</Form.Item>
+					<Form.Item
+						name="upperBarrier"
+						label="Upper Barrier"
+						rules={[{ required: true }]}
+					>
+						<Input type="number" step="0.01" />
+					</Form.Item>
+					<Form.Item
+						name="observeTime"
+						label="Observe Time"
+						rules={[{ required: true }]}
+					>
+						<Input type="number" step="1" />
 					</Form.Item>
 				</Col>
 			</Row>
@@ -210,12 +244,12 @@ const KikoView: React.FunctionComponent<{}> = () => {
 					</Form.Item>
 				</Col>
 			</Row>
-			{typeof ebs !== "undefined" ? (
+			{kiko ? (
 				<Row>
 					<Col>
 						<ResultTable
-							ebsParams={ebsParams}
-							value={ebs.vanilla()}
+							kikoParams={kikoParams}
+							kiko={kiko.getResults()}
 						/>
 					</Col>
 				</Row>

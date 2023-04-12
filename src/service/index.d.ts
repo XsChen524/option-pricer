@@ -152,3 +152,33 @@ export interface AmericanRawParams {
 	steps: string;
 	optionType: string;
 }
+
+export interface KikoParams {
+	spot: number;
+	strike: number;
+	timeToMaturity: number;
+	riskFreeRate: number;
+	volatility: number;
+	lowerBarrier: number;
+	upperBarrier: number;
+	observeTime: number;
+	rebate: number;
+}
+
+export interface KikoRawParams {
+	spot: string;
+	strike: string;
+	timeToMaturity: string;
+	riskFreeRate: string;
+	volatility: string;
+	lowerBarrier: string;
+	upperBarrier: string;
+	observeTime: string;
+	rebate: string;
+}
+
+export interface KikoResult {
+	value: number;
+	std: number;
+	confInt: number[];
+}

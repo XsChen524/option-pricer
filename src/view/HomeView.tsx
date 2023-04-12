@@ -23,7 +23,10 @@ const Home: React.FunctionComponent<{}> = () => {
 						/>
 					}
 				>
-					<Meta title="React + Electron + Antd" />
+					<Meta
+						title="React + Electron + Antd"
+						description="Find .tsx files in src"
+					/>
 				</Card>
 				<Card
 					hoverable

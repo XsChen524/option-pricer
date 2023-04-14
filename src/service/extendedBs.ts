@@ -56,7 +56,8 @@ export default class ExtendedBS implements ExtendedBSParams {
 			(this.riskFreeRate - this.repoRate) * this.termToMaturity;
 		const secondTerm =
 			this.volatility * (math.sqrt(this.termToMaturity) as number);
-		const thirdTerm = 0.5 * secondTerm;
+		const thirdTerm =
+			0.5 * this.volatility * (math.sqrt(this.termToMaturity) as number);
 
 		return dType === "1"
 			? math.divide(firstTerm, secondTerm) + thirdTerm
@@ -79,17 +80,18 @@ export default class ExtendedBS implements ExtendedBSParams {
 				math.exp(0 - this.riskFreeRate * this.termToMaturity) *
 				standardNormalCdf(this.dParam("2"));
 			return firstTerm - secondTerm;
+		} else {
+			// European Put Option
+			const firstTerm =
+				this.spot *
+				math.exp(0 - this.riskFreeRate * this.termToMaturity) *
+				standardNormalCdf(0 - this.dParam("2"));
+			const secondTerm =
+				this.spot *
+				math.exp(0 - this.repoRate * this.termToMaturity) *
+				standardNormalCdf(0 - this.dParam("1"));
+			return firstTerm - secondTerm;
 		}
-		// European Put Option
-		const firstTerm =
-			this.spot *
-			math.exp(0 - this.riskFreeRate * this.termToMaturity) *
-			standardNormalCdf(0 - this.dParam("2"));
-		const secondTerm =
-			this.spot *
-			math.exp(0 - this.repoRate * this.termToMaturity) *
-			standardNormalCdf(0 - this.dParam("1"));
-		return firstTerm - secondTerm;
 	}
 
 	/**

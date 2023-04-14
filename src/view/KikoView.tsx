@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Row, Table } from "antd";
+import { Button, Col, Form, Input, Row, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { KikoParams, KikoRawParams, KikoResult } from "service";
 import "../style/view/global.css";
@@ -88,6 +88,11 @@ const parseData = (
 				key2: "Conf Int",
 				value2: `[${kiko.confInt[0]}, ${kiko.confInt[1]}]`,
 			},
+			{
+				key: "7",
+				key1: "Num of paths",
+				value1: kikoParams.numPaths,
+			},
 		];
 	}
 	return [];
@@ -130,19 +135,23 @@ const KikoView: React.FunctionComponent<{}> = () => {
 		undefined
 	);
 	const [kiko, setKiko] = useState<Kiko | undefined>(undefined);
+	const [isLoading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
 
 	useEffect(() => {
-		if (kikoParams) setKiko(new Kiko(kikoParams));
+		if (kikoParams) {
+			setKiko(new Kiko(kikoParams));
+		}
 	}, [kikoParams]);
 
-	/*
 	useEffect(() => {
-		if (kiko) kiko.debug();
+		if (kiko) {
+			setLoading(false);
+		}
 	}, [kiko]);
-	*/
 
 	const onFinish = (value: KikoRawParams) => {
+		setLoading(true);
 		setKikoParams(parseRawParams<KikoRawParams, KikoParams>(value));
 	};
 
@@ -150,6 +159,7 @@ const KikoView: React.FunctionComponent<{}> = () => {
 		form.resetFields();
 		setKikoParams(undefined);
 		setKiko(undefined);
+		setLoading(false);
 	};
 
 	return (
@@ -183,6 +193,13 @@ const KikoView: React.FunctionComponent<{}> = () => {
 						rules={[{ required: true }]}
 					>
 						<Input prefix="$" type="number" step="0.01" />
+					</Form.Item>
+					<Form.Item
+						name="numPaths"
+						label="# of Paths"
+						rules={[{ required: true }]}
+					>
+						<Input defaultValue="100" type="number" />
 					</Form.Item>
 				</Col>
 				<Col className="gutter-row input-form-col" span={12}>
@@ -244,6 +261,7 @@ const KikoView: React.FunctionComponent<{}> = () => {
 					</Form.Item>
 				</Col>
 			</Row>
+			{isLoading ? <Spin tip="Loading" size="small" /> : undefined}
 			{kiko ? (
 				<Row>
 					<Col>

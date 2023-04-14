@@ -163,6 +163,7 @@ export interface KikoParams {
 	upperBarrier: number;
 	observeTime: number;
 	rebate: number;
+	numPaths: number;
 }
 
 export interface KikoRawParams {
@@ -175,6 +176,7 @@ export interface KikoRawParams {
 	upperBarrier: string;
 	observeTime: string;
 	rebate: string;
+	numPaths: number;
 }
 
 export interface KikoResult {

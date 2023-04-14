@@ -16,12 +16,6 @@ const math = create(all, {
 const std = new Gaussian(0, 1);
 
 /**
- * @constant NUM_OF_PATHS
- * @description number of paths in Monte Carlo
- */
-const NUM_OF_PATHS = 100;
-
-/**
  * Class for KIKO Put option
  * @class Kiko
  * @implements KikoParams
@@ -49,6 +43,8 @@ export default class Kiko implements KikoParams {
 
 	rebate: number;
 
+	numPaths: number;
+
 	private interval: number; // Delta t
 
 	private samples: number[][];
@@ -69,6 +65,7 @@ export default class Kiko implements KikoParams {
 		this.upperBarrier = args.upperBarrier;
 		this.observeTime = args.observeTime;
 		this.rebate = args.rebate;
+		this.numPaths = args.numPaths;
 		this.interval = math.divide(this.timeToMaturity, this.observeTime);
 		this.samples = [];
 		this.samplesCumSum = [];
@@ -94,9 +91,9 @@ export default class Kiko implements KikoParams {
 			 * The uniformSamples slice the first row, take care
 			 */
 			const uniformSamples: number[][] = sequence
-				.take(NUM_OF_PATHS + 1)
+				.take(this.numPaths + 1)
 				.slice(1);
-			for (let m = 0; m < NUM_OF_PATHS; m += 1) {
+			for (let m = 0; m < this.numPaths; m += 1) {
 				samples[m] = [];
 				for (let n = 0; n < this.observeTime; n += 1) {
 					samples[m].push(
@@ -135,7 +132,7 @@ export default class Kiko implements KikoParams {
 			for (let n = 0; n < this.observeTime; n += 1) {
 				samplesCumSum[n] = [];
 				let colSum = 0;
-				for (let m = 0; m < NUM_OF_PATHS; m += 1) {
+				for (let m = 0; m < this.numPaths; m += 1) {
 					colSum += this.samples[m][n];
 					samplesCumSum[n].push(colSum);
 				}
@@ -216,7 +213,7 @@ export default class Kiko implements KikoParams {
 			<number>(
 				math.divide(
 					math.multiply(1.96, stdDev),
-					math.sqrt(NUM_OF_PATHS)
+					math.sqrt(this.numPaths)
 				)
 			)
 		);
@@ -225,7 +222,7 @@ export default class Kiko implements KikoParams {
 			<number>(
 				math.divide(
 					math.multiply(1.96, stdDev),
-					math.sqrt(NUM_OF_PATHS)
+					math.sqrt(this.numPaths)
 				)
 			)
 		);
